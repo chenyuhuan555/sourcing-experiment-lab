@@ -8,15 +8,23 @@
 <body>
 <main>
   <header><h1>寻访实验台<span>.</span></h1><button id="example" type="button">载入示例</button></header>
+  <section class="results" aria-label="本轮复盘">
+    <div class="comparison">
+      <h2>每小时独有符合</h2>
+      <div class="bar-row"><span>路线 A</span><div class="track" aria-hidden="true"><div id="bar-a"></div></div><strong id="rate-a">—</strong></div>
+      <div class="bar-row"><span>路线 B</span><div class="track" aria-hidden="true"><div id="bar-b"></div></div><strong id="rate-b">—</strong></div>
+      <p id="totals"></p>
+    </div>
+    <div class="verdict">
+      <h2>下一轮</h2><p id="recommendation"></p><p id="adjustment"></p>
+    </div>
+  </section>
   <section class="brief" aria-label="实验设置">
     <label>岗位<input id="job" maxlength="100"></label>
     <label>必要条件<textarea id="criteria" rows="3" maxlength="500"></textarea></label>
   </section>
   <div class="routes" id="routes"></div>
-  <section class="results" aria-label="本轮复盘">
-    <h2>本轮复盘</h2><p id="totals"></p><p id="recommendation"></p><p id="adjustment"></p>
-    <p id="storage" role="status"></p>
-  </section>
+  <p id="storage" role="status"></p>
 </main>
 </body>
 </html>

@@ -36,13 +36,13 @@ function render(data) {
   $('routes').replaceChildren(...data.routes.map((route, index) => {
     const section = document.createElement('section');
     section.className = 'route';
-    section.innerHTML = '<h2></h2><label>搜索方向<textarea rows="2" maxlength="500"></textarea></label><label class="time">用时（分钟）<input type="number" min="1" step="1"></label><table><thead><tr><th>代号</th><th>复核</th><th>主要缺口</th><th></th></tr></thead><tbody></tbody></table><button type="button">添加记录</button><p class="metrics"></p>';
+    section.innerHTML = '<h2></h2><div class="route-fields"><label>搜索方向<textarea rows="2" maxlength="500"></textarea></label><label class="time">用时（分钟）<input type="number" min="1" step="1"></label></div><p class="metrics"></p><details><summary>复核记录</summary><table><thead><tr><th scope="col">代号</th><th scope="col">复核</th><th scope="col">主要缺口</th><th scope="col" aria-label="操作"></th></tr></thead><tbody></tbody></table><button class="add" type="button">添加记录</button></details>';
     section.querySelector('h2').textContent = labels[index];
     section.querySelector('textarea').value = route.keywords;
     section.querySelector('input').value = route.minutes;
     const table = section.querySelector('tbody');
     for (const row of route.rows) addRow(table, row);
-    section.querySelector(':scope > button').addEventListener('click', () => {
+    section.querySelector('.add').addEventListener('click', () => {
       addRow(table); table.lastElementChild.querySelector('input').focus(); update();
     });
     return section;
@@ -59,12 +59,16 @@ function update() {
     }),
   }));
   const result = compare(routes);
+  const maxRate = Math.max(1, ...result.routes.map(route => route.perHour ?? 0));
   result.routes.forEach((route, i) => {
-    sections[i].querySelector('.metrics').textContent = '去重 ' + route.unique + ' 份 · 符合 ' + route.pass + ' · 待核实 ' + route.pending + ' · 独有符合 ' + route.exclusivePass + (route.perHour === null ? '' : '（' + Number(route.perHour.toFixed(1)) + ' / 小时）');
+    const letter = i === 0 ? 'a' : 'b';
+    $('bar-' + letter).style.width = ((route.perHour ?? 0) / maxRate * 100) + '%';
+    $('rate-' + letter).textContent = route.perHour === null ? '—' : Number(route.perHour.toFixed(1));
+    sections[i].querySelector('.metrics').textContent = '去重 ' + route.unique + ' 份 · 符合 ' + route.pass + ' · 待核实 ' + route.pending + ' · 独有符合 ' + route.exclusivePass;
   });
   $('totals').textContent = '合计 ' + result.unique + ' 份 · 两路重合 ' + result.shared + ' 份';
   const comparable = result.routes.every(route => route.unique && route.perHour !== null);
-  $('recommendation').textContent = !comparable ? '补齐两路的样本和用时后再比较。' : result.preferred === null ? '本轮两路持平，调整搜索词后再试一轮。' : '下一轮先沿' + labels[result.preferred] + '寻访。本轮它每小时找到的独有符合样本更多。';
+  $('recommendation').textContent = !comparable ? '补齐样本和用时' : result.preferred === null ? '两路持平，继续复测' : '先沿' + labels[result.preferred] + '寻访';
   $('adjustment').textContent = result.routes.map((route, i) => route.topGap ? labels[i] + '复测时优先核对：' + route.topGap : '').filter(Boolean).join('；');
   try { localStorage.setItem(key, JSON.stringify({ job: $('job').value, criteria: $('criteria').value, routes })); $('storage').textContent = ''; }
   catch { $('storage').textContent = '浏览器未保存本轮输入，刷新会丢失。'; }
