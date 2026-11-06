@@ -1,13 +1,16 @@
 :root {
   color-scheme: light;
-  --paper: #f8faff;
+  --paper: #f2f4fb;
+  --surface: #fff;
+  --panel-radius: 24px;
+  --field-radius: 12px;
   --ink: #181e35;
   --muted: #535e78;
   --line: #d7ddec;
   --accent: #3045a6;
   --label: 13px;
-  --route-a: #9db4ff;
-  --route-b: #e6a9d4;
+  --route-a: #6650d9;
+  --route-b: #178278;
 }
 * { box-sizing: border-box; }
 body {
@@ -23,18 +26,18 @@ h2 { margin: 0; font-size: 20px; }
 .studio {
   display: grid;
   grid-template-columns: minmax(0, 2.1fr) minmax(260px, 1fr);
-  background: #151d3b;
-  color: #f6f8ff;
-  border-radius: 10px;
+  background: var(--surface);
+  border-radius: var(--panel-radius);
+  box-shadow: 0 16px 42px #29254f0b;
   overflow: hidden;
 }
 .comparison { min-width: 0; padding: 29px 32px 22px; }
 .chart-header, .scenario-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .chart-header h2 { font-size: clamp(24px, 3vw, 39px); line-height: 1.15; letter-spacing: -.05em; }
-#unit { margin: 5px 0 0; color: #bcc7e9; font-size: var(--label); }
-.metric-switch { display: flex; padding: 3px; border: 1px solid #465175; border-radius: 7px; }
-.metric-switch button { background: transparent; border: 0; color: #eff2ff; padding: 5px 10px; }
-.metric-switch button[aria-pressed="true"] { background: #e7edff; color: #19264c; }
+#unit { margin: 5px 0 0; color: #535e78; font-size: var(--label); }
+.metric-switch { display: flex; padding: 4px; background: #eff0f8; border-radius: 999px; }
+.metric-switch button { background: transparent; border: 0; color: var(--muted); padding: 6px 13px; border-radius: 999px; }
+.metric-switch button[aria-pressed="true"] { background: #fff; color: #302367; box-shadow: 0 1px 5px #26234d19; }
 .plot { --route-label: 46px; --value-width: 72px; --plot-gap: 12px; margin-top: 22px; }
 .bar-row {
   display: grid;
@@ -46,32 +49,32 @@ h2 { margin: 0; font-size: 20px; }
 }
 .bar-row strong { text-align: right; font-size: clamp(27px, 4vw, 48px); line-height: 1; font-variant-numeric: tabular-nums; }
 .track {
-  height: 33px;
-  background: repeating-linear-gradient(90deg, #263153 0, #263153 calc(25% - 1px), #404c70 calc(25% - 1px), #404c70 25%);
-  border-radius: 3px;
+  height: 22px;
+  background: #edf0f7;
+  border-radius: 999px;
   overflow: hidden;
 }
-.track div { height: 100%; background: var(--route-a); transition: width 180ms ease-out; }
+.track div { height: 100%; border-radius: inherit; background: var(--route-a); transition: width 180ms ease-out; }
 #bar-b { background: var(--route-b); }
 .axis {
   display: flex;
   justify-content: space-between;
   margin: 0 calc(var(--value-width) + var(--plot-gap)) 0 calc(var(--route-label) + var(--plot-gap));
-  color: #bcc7e9;
+  color: #535e78;
   font: 12px/1.3 ui-monospace, monospace;
 }
-#totals { margin: 18px 0 0; color: #cbd5ef; font-size: var(--label); }
-.scenario { background: #202949; border-left: 1px solid #364264; padding: 26px 24px 21px; }
+#totals { margin: 18px 0 0; color: #535e78; font-size: var(--label); }
+.scenario { background: linear-gradient(145deg, #eeebff, #edf6f7); padding: 26px 24px 21px; }
 .scenario-head { align-items: center; margin-bottom: 16px; }
-.scenario button { background: transparent; color: #eef2ff; border-color: #5d6a90; }
+.scenario button { background: #ffffff85; color: var(--ink); border-color: transparent; }
 .scenario button:disabled { opacity: .55; cursor: default; }
 .scenario label { display: flex; justify-content: space-between; gap: 8px; margin: 11px 0 2px; }
-.scenario output { color: #9db4ff; font-variant-numeric: tabular-nums; }
+.scenario output { color: var(--route-a); font-variant-numeric: tabular-nums; }
 .scenario label[for="scenario-b"] output { color: var(--route-b); }
 .scenario input[type="range"] { margin: 0; padding: 0; height: 24px; accent-color: var(--route-a); background: transparent; }
 #scenario-b { accent-color: var(--route-b); }
-.verdict { margin-top: 14px; padding-top: 13px; border-top: 1px solid #495677; }
-.verdict h3 { margin: 0 0 4px; font-size: var(--label); color: #cbd5ef; }
+.verdict { margin-top: 14px; padding-top: 13px; border-top: 1px solid #ced5e7; }
+.verdict h3 { margin: 0 0 4px; font-size: var(--label); color: #535e78; }
 #recommendation { margin: 0; font-size: clamp(18px, 2.2vw, 25px); font-weight: 750; letter-spacing: -.025em; }
 .brief, .routes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .brief { padding: 25px 0 18px; }
@@ -80,22 +83,23 @@ h2 { margin: 0; font-size: 20px; }
 #adjustment span + span::before { content: " / "; padding: 0 4px; }
 #adjustment:empty, #storage:empty { display: none; }
 .brief textarea { min-height: 61px; height: 61px; }
-.route { min-width: 0; padding: 18px 0 0; border-top: 1px solid var(--line); }
+.route { min-width: 0; padding: 20px; border-radius: var(--panel-radius); background: var(--surface); }
 .route h2 { margin-bottom: 10px; }
 .route-fields { display: grid; grid-template-columns: minmax(0, 1fr) 98px; gap: 12px; }
 label { display: block; font-size: var(--label); font-weight: 650; }
 input, textarea, select, button {
   font: inherit;
   color: inherit;
-  border: 1px solid #d7ddec;
-  border-radius: 5px;
+  border: 1px solid transparent;
+  border-radius: var(--field-radius);
   background: #fff;
   padding: 7px 9px;
 }
 input, textarea, select { display: block; width: 100%; margin-top: 5px; min-width: 0; font-size: 14px; font-weight: 400; }
 textarea { resize: vertical; }
 button, summary { cursor: pointer; font-size: var(--label); font-weight: 600; }
-button { white-space: nowrap; }
+button { white-space: nowrap; padding-inline: 13px; }
+.masthead button { border-radius: 999px; }
 button:hover:not(:disabled) { border-color: currentColor; }
 :focus-visible { outline: 2px solid #3045a6; outline-offset: 3px; }
 .studio :focus-visible { outline-color: var(--route-a); }
@@ -114,14 +118,13 @@ td button { padding: 5px; font-size: 12px; }
 td input, td select { font-size: 12px; padding-inline: 5px; }
 .metrics, #storage { color: var(--muted); font-size: var(--label); margin: 12px 0; }
 .brief :is(input, textarea), .route :is(input, textarea, select) {
-  border: 0;
-  border-bottom: 1px solid #aeb9d5;
-  border-radius: 3px 3px 0 0;
-  background: #edf1fa;
+  border: 1px solid transparent;
+  border-radius: var(--field-radius);
+  background: #eef0f7;
 }
 .brief :is(input, textarea):focus, .route :is(input, textarea, select):focus {
   background: #fff;
-  border-bottom-color: var(--accent);
+  border-color: #c1b6ef;
 }
 .routes { gap: 24px; }
 @media (max-width: 760px) {
@@ -129,7 +132,9 @@ td input, td select { font-size: 12px; padding-inline: 5px; }
   .masthead { margin-bottom: 16px; }
   .studio, .brief, .routes { grid-template-columns: 1fr; }
   .comparison, .scenario { padding: 17px 15px; }
-  .scenario { border-left: 0; border-top: 1px solid #364264; }
+  .scenario { padding: 18px; }
+  .route { padding: 16px; }
+  .routes { gap: 14px; }
   .plot { --value-width: 44px; --plot-gap: 8px; margin-top: 14px; }
   .track { height: 25px; }
   .brief-heading { display: block; }
