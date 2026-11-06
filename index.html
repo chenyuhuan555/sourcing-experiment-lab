@@ -7,11 +7,8 @@
 </head>
 <body>
 <main>
-  <header><h1>寻访实验台</h1><button id="example" type="button">载入示例</button></header>
-  <section class="results" aria-label="本轮复盘">
-    <div class="verdict">
-      <h2>下一轮</h2><p id="recommendation"></p><p id="adjustment"></p>
-    </div>
+  <header class="hero">
+    <h1>寻访<br>实验台<span>.</span></h1>
     <div class="comparison">
       <h2>独有符合数 <span>份 / 小时</span></h2>
       <div class="plot">
@@ -21,8 +18,13 @@
       </div>
       <p id="totals"></p>
     </div>
+  </header>
+  <section class="verdict" aria-label="本轮复盘">
+    <div><h2>下一轮</h2><p id="recommendation"></p></div>
+    <p id="adjustment"></p>
   </section>
   <section class="brief" aria-label="实验设置">
+    <div class="brief-heading"><h2>实验设置</h2><button id="example" type="button">载入示例</button></div>
     <label>岗位<input id="job" maxlength="100"></label>
     <label>必要条件<textarea id="criteria" rows="3" maxlength="500"></textarea></label>
   </section>
