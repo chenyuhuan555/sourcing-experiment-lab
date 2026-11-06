@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>寻访实验台</title><link rel="stylesheet" href="style.css">
+  <script type="module" src="app.mjs"></script>
+</head>
+<body>
+<main>
+  <header><h1>寻访实验台<span>.</span></h1><button id="example" type="button">载入示例</button></header>
+  <section class="brief" aria-label="实验设置">
+    <label>岗位<input id="job" maxlength="100"></label>
+    <label>必要条件<textarea id="criteria" rows="3" maxlength="500"></textarea></label>
+  </section>
+  <div class="routes" id="routes"></div>
+  <section class="results" aria-label="本轮复盘">
+    <h2>本轮复盘</h2><p id="totals"></p><p id="recommendation"></p><p id="adjustment"></p>
+    <p id="storage" role="status"></p>
+  </section>
+</main>
+</body>
+</html>
