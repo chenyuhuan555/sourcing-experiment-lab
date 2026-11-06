@@ -7,10 +7,16 @@
 </head>
 <body>
 <main>
-  <header class="hero">
-    <h1>寻访<br>实验台<span>.</span></h1>
+  <header class="masthead"><h1>寻访实验台</h1><button id="example" type="button">载入示例</button></header>
+  <section class="studio" aria-label="路线对比">
     <div class="comparison">
-      <h2>独有符合数 <span>份 / 小时</span></h2>
+      <div class="chart-header">
+        <div><h2>路线对比</h2><p id="unit">每小时独有符合数</p></div>
+        <div class="metric-switch" role="group" aria-label="对比指标">
+          <button type="button" data-metric="perHour" aria-pressed="true">效率</button>
+          <button type="button" data-metric="unique" aria-pressed="false">样本</button>
+        </div>
+      </div>
       <div class="plot">
         <div class="bar-row"><span>路线 A</span><div class="track" aria-hidden="true"><div id="bar-a"></div></div><strong id="rate-a">—</strong></div>
         <div class="bar-row"><span>路线 B</span><div class="track" aria-hidden="true"><div id="bar-b"></div></div><strong id="rate-b">—</strong></div>
@@ -18,13 +24,17 @@
       </div>
       <p id="totals"></p>
     </div>
-  </header>
-  <section class="verdict" aria-label="本轮复盘">
-    <div><h2>下一轮</h2><p id="recommendation"></p></div>
-    <p id="adjustment"></p>
+    <aside class="scenario" aria-label="用时试算">
+      <div class="scenario-head"><h2>用时试算</h2><button id="reset-scenario" type="button" disabled>还原</button></div>
+      <label for="scenario-a">路线 A <output id="minutes-a" for="scenario-a"></output></label>
+      <input id="scenario-a" type="range" min="1" max="120" value="30">
+      <label for="scenario-b">路线 B <output id="minutes-b" for="scenario-b"></output></label>
+      <input id="scenario-b" type="range" min="1" max="120" value="30">
+      <div class="verdict"><h3 id="verdict-label">下一轮</h3><p id="recommendation" role="status"></p></div>
+    </aside>
   </section>
   <section class="brief" aria-label="实验设置">
-    <div class="brief-heading"><h2>实验设置</h2><button id="example" type="button">载入示例</button></div>
+    <div class="brief-heading"><h2>实验记录</h2><p id="adjustment"></p></div>
     <label>岗位<input id="job" maxlength="100"></label>
     <label>必要条件<textarea id="criteria" rows="3" maxlength="500"></textarea></label>
   </section>

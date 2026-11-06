@@ -2,6 +2,9 @@ import { compare } from './compare.mjs';
 const key = 'sourcing-experiment-v1';
 const $ = id => document.getElementById(id);
 const labels = ['路线 A', '路线 B'];
+const letters = ['a', 'b'];
+let metric = 'perHour';
+const trialMinutes = new Map();
 const options = [['pending', '待核实'], ['pass', '符合'], ['fail', '不符合']];
 const sample = {
   job: 'AI 招聘产品经理',
@@ -32,6 +35,7 @@ function addRow(table, row = emptyRow()) {
   for (const el of [id, status, gap, remove]) tr.insertCell().append(el);
 }
 function render(data) {
+  trialMinutes.clear();
   $('job').value = data.job; $('criteria').value = data.criteria;
   $('routes').replaceChildren(...data.routes.map((route, index) => {
     const section = document.createElement('section');
@@ -49,7 +53,7 @@ function render(data) {
   }));
   update();
 }
-function update() {
+function update(save = true) {
   const sections = [...document.querySelectorAll('.route')];
   const routes = sections.map(section => ({
     keywords: section.querySelector('textarea').value, minutes: section.querySelector('.time input').value,
@@ -58,17 +62,28 @@ function update() {
       return { id: id.value, status: status.value, gap: gap.value };
     }),
   }));
-  const result = compare(routes);
-  const maxRate = Math.ceil(Math.max(1, ...result.routes.map(route => route.perHour ?? 0)));
-  $('scale-mid').textContent = maxRate / 2;
-  $('scale-end').textContent = maxRate;
+  const recorded = compare(routes);
+  const trial = routes.map((route, index) => ({ ...route, minutes: trialMinutes.get(index) ?? route.minutes }));
+  const result = trialMinutes.size ? compare(trial) : recorded;
+  const maxValue = Math.ceil(Math.max(1, ...result.routes.map(route => route[metric] ?? 0)));
+  $('scale-mid').textContent = maxValue / 2;
+  $('scale-end').textContent = maxValue;
   result.routes.forEach((route, i) => {
-    const letter = i === 0 ? 'a' : 'b';
-    $('bar-' + letter).style.width = ((route.perHour ?? 0) / maxRate * 100) + '%';
-    $('rate-' + letter).textContent = route.perHour === null ? '—' : Number(route.perHour.toFixed(1));
+    const letter = letters[i];
+    const value = route[metric];
+    $('bar-' + letter).style.width = ((value ?? 0) / maxValue * 100) + '%';
+    $('rate-' + letter).textContent = value === null ? '—' : Number(value.toFixed(1));
+    const slider = $('scenario-' + letter);
+    const minutes = Number(trial[i].minutes);
+    slider.max = Math.max(120, Math.ceil(Number(routes[i].minutes)), Math.ceil(minutes));
+    slider.value = minutes > 0 ? minutes : 30;
+    $('minutes-' + letter).textContent = minutes > 0 ? minutes + ' 分钟' : '待填写';
     sections[i].querySelector('.metrics').textContent = '去重 ' + route.unique + ' 份 · 符合 ' + route.pass + ' · 待核实 ' + route.pending + ' · 独有符合 ' + route.exclusivePass;
   });
   $('totals').textContent = '合计 ' + result.unique + ' 份 · 两路重合 ' + result.shared + ' 份';
+  $('unit').textContent = metric === 'unique' ? '各路线去重样本数' : '每小时独有符合数';
+  $('reset-scenario').disabled = !trialMinutes.size;
+  $('verdict-label').textContent = trialMinutes.size ? '试算结果' : '下一轮';
   const comparable = result.routes.every(route => route.unique && route.perHour !== null);
   $('recommendation').textContent = !comparable ? '补齐样本和用时' : result.preferred === null ? '两路持平，继续复测' : '先沿路线 ' + ['A', 'B'][result.preferred] + ' 寻访';
   $('adjustment').replaceChildren(...result.routes.flatMap((route, i) => {
@@ -77,13 +92,32 @@ function update() {
     line.textContent = labels[i] + ' · 优先核对' + route.topGap;
     return [line];
   }));
-  try { localStorage.setItem(key, JSON.stringify({ job: $('job').value, criteria: $('criteria').value, routes })); $('storage').textContent = ''; }
-  catch { $('storage').textContent = '浏览器未保存本轮输入，刷新会丢失。'; }
+  if (save) {
+    try { localStorage.setItem(key, JSON.stringify({ job: $('job').value, criteria: $('criteria').value, routes })); $('storage').textContent = ''; }
+    catch { $('storage').textContent = '浏览器未保存本轮输入，刷新会丢失。'; }
+  }
 }
 let saved;
 try { saved = JSON.parse(localStorage.getItem(key)); } catch { /* Start with the example. */ }
 render(saved?.routes?.length === 2 ? saved : sample);
-document.querySelector('main').addEventListener('input', update);
+document.querySelector('main').addEventListener('input', event => {
+  const index = letters.findIndex(letter => event.target.id === 'scenario-' + letter);
+  if (index >= 0) {
+    trialMinutes.set(index, Number(event.target.value));
+    update(false);
+  } else {
+    if (event.target.matches('.time input')) trialMinutes.clear();
+    update();
+  }
+});
+document.querySelector('.metric-switch').addEventListener('click', event => {
+  const button = event.target.closest('[data-metric]');
+  if (!button) return;
+  metric = button.dataset.metric;
+  document.querySelectorAll('[data-metric]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+  update(false);
+});
+$('reset-scenario').addEventListener('click', () => { trialMinutes.clear(); update(false); });
 $('example').addEventListener('click', () => {
   if (window.confirm('用示例替换本轮输入？')) render(sample);
 });
