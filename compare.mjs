@@ -1,3 +1,9 @@
+export function crossover(minutesA, passesA, passesB) {
+  if (!Number.isFinite(minutesA) || minutesA <= 0 || passesA <= 0 || passesB <= 0) return null;
+  const tie = minutesA * passesB / passesA;
+  return Number.isFinite(tie) ? { tie, faster: Math.ceil(tie) - 1 } : null;
+}
+
 export function compare(routes) {
   const maps = routes.map(route => {
     const seen = new Map();

@@ -1,6 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { compare } from './compare.mjs';
+import { compare, crossover } from './compare.mjs';
+test('crossover distinguishes a tie from a strictly faster whole minute', () => {
+  assert.deepEqual(crossover(30, 2, 1), { tie: 15, faster: 14 });
+  assert.deepEqual(crossover(31, 2, 1), { tie: 15.5, faster: 15 });
+  assert.equal(crossover(30, 0, 1), null);
+});
 const row = (id, status = 'pass', gap = '') => ({ id, status, gap });
 test('deduplicates candidates and excludes shared passes from preference', () => {
   const result = compare([{ minutes: 30, rows: [row(' X '), row('x'), row('A')] }, { minutes: 30, rows: [row('x'), row('B', 'pending', '上线经历')] }]);

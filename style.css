@@ -149,3 +149,35 @@ td input, td select { font-size: 12px; padding-inline: 5px; }
 @media (prefers-reduced-motion: reduce) {
   .track div { transition: none; }
 }
+.crossover {
+  margin-top: 24px;
+  padding: 17px 19px 15px;
+  border-radius: 17px;
+  background: linear-gradient(110deg, #edf6fb, #f5f8fc);
+}
+.crossover-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.crossover h3 { margin: 0; font-size: 15px; font-weight: 650; }
+#crossover-caption { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+#try-crossover { background: #fff; color: var(--accent); border: 1px solid #cee0ec; }
+.crossover-map { margin-top: 16px; }
+.crossover-rail {
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #96bad3 var(--boundary), #d5e5f0 var(--boundary));
+}
+.crossover-marker, .crossover-cursor { position: absolute; transform: translateX(-50%); }
+.crossover-marker { left: var(--boundary); top: -3px; height: 16px; width: 2px; border-radius: 2px; background: #426783; }
+.crossover-cursor {
+  display: none;
+  left: var(--cursor);
+  top: -2px;
+  width: 14px;
+  height: 14px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #325d7e;
+  box-shadow: 0 1px 5px #31536b50;
+}
+.has-cursor .crossover-cursor { display: block; }
+.crossover-labels { display: flex; justify-content: space-between; margin-top: 6px; color: var(--muted); font-size: 11px; }

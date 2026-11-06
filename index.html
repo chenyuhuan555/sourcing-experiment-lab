@@ -23,6 +23,16 @@
         <div class="axis" aria-hidden="true"><span>0</span><span id="scale-mid"></span><span id="scale-end"></span></div>
       </div>
       <p id="totals"></p>
+      <div class="crossover" id="crossover" hidden>
+        <div class="crossover-heading">
+          <div><h3>效率分界</h3><p id="crossover-caption"></p></div>
+          <button id="try-crossover" type="button"></button>
+        </div>
+        <div class="crossover-map" aria-hidden="true">
+          <div class="crossover-rail"><span class="crossover-marker"></span><span class="crossover-cursor"></span></div>
+          <div class="crossover-labels"><span>路线 B 更快</span><span>路线 A 更快</span></div>
+        </div>
+      </div>
     </div>
     <aside class="scenario" aria-label="用时试算">
       <div class="scenario-head"><h2>用时试算</h2><button id="reset-scenario" type="button" disabled>还原</button></div>

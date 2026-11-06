@@ -1,4 +1,4 @@
-import { compare } from './compare.mjs';
+import { compare, crossover } from './compare.mjs';
 const key = 'sourcing-experiment-v1';
 const $ = id => document.getElementById(id);
 const labels = ['路线 A', '路线 B'];
@@ -81,6 +81,24 @@ function update(save = true) {
     sections[i].querySelector('.metrics').textContent = '去重 ' + route.unique + ' 份 · 符合 ' + route.pass + ' · 待核实 ' + route.pending + ' · 独有符合 ' + route.exclusivePass;
   });
   $('totals').textContent = '合计 ' + result.unique + ' 份 · 两路重合 ' + result.shared + ' 份';
+  const [a, b] = result.routes;
+  const boundary = crossover(Number(trial[0].minutes), a.exclusivePass, b.exclusivePass);
+  const crossoverPanel = $('crossover');
+  crossoverPanel.hidden = metric !== 'perHour' || !boundary;
+  if (!crossoverPanel.hidden) {
+    const currentB = Number(trial[1].minutes);
+    const scale = Math.max(boundary.tie * 1.5, currentB * 1.1, 1);
+    crossoverPanel.style.setProperty('--boundary', boundary.tie / scale * 100 + '%');
+    crossoverPanel.style.setProperty('--cursor', currentB / scale * 100 + '%');
+    crossoverPanel.classList.toggle('has-cursor', currentB > 0);
+    const formatted = new Intl.NumberFormat('zh-CN', { maximumSignificantDigits: 5 }).format(boundary.tie);
+    const approximation = Number(formatted.replaceAll(',', '')) === boundary.tie ? '' : '约 ';
+    $('crossover-caption').textContent = 'B 用时 ' + approximation + formatted + ' 分钟时，两路效率相同';
+    const shortcut = $('try-crossover');
+    shortcut.hidden = boundary.faster < 1;
+    shortcut.dataset.minutes = boundary.faster;
+    shortcut.textContent = '试算 B · ' + boundary.faster + ' 分钟';
+  }
   $('unit').textContent = metric === 'unique' ? '各路线去重样本数' : '每小时独有符合数';
   $('reset-scenario').disabled = !trialMinutes.size;
   $('verdict-label').textContent = trialMinutes.size ? '试算结果' : '下一轮';
@@ -118,6 +136,10 @@ document.querySelector('.metric-switch').addEventListener('click', event => {
   update(false);
 });
 $('reset-scenario').addEventListener('click', () => { trialMinutes.clear(); update(false); });
+$('try-crossover').addEventListener('click', event => {
+  trialMinutes.set(1, Number(event.currentTarget.dataset.minutes));
+  update(false);
+});
 $('example').addEventListener('click', () => {
   if (window.confirm('用示例替换本轮输入？')) render(sample);
 });
