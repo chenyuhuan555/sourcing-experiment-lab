@@ -59,7 +59,9 @@ function update() {
     }),
   }));
   const result = compare(routes);
-  const maxRate = Math.max(1, ...result.routes.map(route => route.perHour ?? 0));
+  const maxRate = Math.ceil(Math.max(1, ...result.routes.map(route => route.perHour ?? 0)));
+  $('scale-mid').textContent = maxRate / 2;
+  $('scale-end').textContent = maxRate;
   result.routes.forEach((route, i) => {
     const letter = i === 0 ? 'a' : 'b';
     $('bar-' + letter).style.width = ((route.perHour ?? 0) / maxRate * 100) + '%';
@@ -68,8 +70,13 @@ function update() {
   });
   $('totals').textContent = '合计 ' + result.unique + ' 份 · 两路重合 ' + result.shared + ' 份';
   const comparable = result.routes.every(route => route.unique && route.perHour !== null);
-  $('recommendation').textContent = !comparable ? '补齐样本和用时' : result.preferred === null ? '两路持平，继续复测' : '先沿' + labels[result.preferred] + '寻访';
-  $('adjustment').textContent = result.routes.map((route, i) => route.topGap ? labels[i] + '复测时优先核对：' + route.topGap : '').filter(Boolean).join('；');
+  $('recommendation').textContent = !comparable ? '补齐样本和用时' : result.preferred === null ? '两路持平，继续复测' : '先沿路线 ' + ['A', 'B'][result.preferred] + ' 寻访';
+  $('adjustment').replaceChildren(...result.routes.flatMap((route, i) => {
+    if (!route.topGap) return [];
+    const line = document.createElement('span');
+    line.textContent = labels[i] + ' · 优先核对' + route.topGap;
+    return [line];
+  }));
   try { localStorage.setItem(key, JSON.stringify({ job: $('job').value, criteria: $('criteria').value, routes })); $('storage').textContent = ''; }
   catch { $('storage').textContent = '浏览器未保存本轮输入，刷新会丢失。'; }
 }

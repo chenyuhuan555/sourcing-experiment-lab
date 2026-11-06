@@ -7,16 +7,19 @@
 </head>
 <body>
 <main>
-  <header><h1>寻访实验台<span>.</span></h1><button id="example" type="button">载入示例</button></header>
+  <header><h1>寻访实验台</h1><button id="example" type="button">载入示例</button></header>
   <section class="results" aria-label="本轮复盘">
-    <div class="comparison">
-      <h2>每小时独有符合</h2>
-      <div class="bar-row"><span>路线 A</span><div class="track" aria-hidden="true"><div id="bar-a"></div></div><strong id="rate-a">—</strong></div>
-      <div class="bar-row"><span>路线 B</span><div class="track" aria-hidden="true"><div id="bar-b"></div></div><strong id="rate-b">—</strong></div>
-      <p id="totals"></p>
-    </div>
     <div class="verdict">
       <h2>下一轮</h2><p id="recommendation"></p><p id="adjustment"></p>
+    </div>
+    <div class="comparison">
+      <h2>独有符合数 <span>份 / 小时</span></h2>
+      <div class="plot">
+        <div class="bar-row"><span>路线 A</span><div class="track" aria-hidden="true"><div id="bar-a"></div></div><strong id="rate-a">—</strong></div>
+        <div class="bar-row"><span>路线 B</span><div class="track" aria-hidden="true"><div id="bar-b"></div></div><strong id="rate-b">—</strong></div>
+        <div class="axis" aria-hidden="true"><span>0</span><span id="scale-mid"></span><span id="scale-end"></span></div>
+      </div>
+      <p id="totals"></p>
     </div>
   </section>
   <section class="brief" aria-label="实验设置">
